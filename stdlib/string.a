@@ -1,10 +1,11 @@
 
-use pre::arr::Arr;
+use std::arr::Arr;
 
 
 pub struct Str {
     buf: Arr<u8>
 }
+
 
 
 

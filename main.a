@@ -1,7 +1,22 @@
-mod stdlib::pre;
+mod stdlib::std;
+mod compiler::pre;
 
+use std::string::Str;
+
+use pre::abyss_lexer::cursor::Cursor;
+use pre::abyss_lexer::scanner::Scanner;
+use pre::abyss_lexer::token::token_from;
+use pre::abyss_lexer::token::A;
+use pre::abyss_lexer::token::B;
+use pre::abyss_lexer::token::C;
 
 fn app_main {
 
-    printf("hello world")
+
+    if Scanner.is_ident_start("3"[0]) {
+        printf("yes\n")
+    } else {  
+        printf("no\n")
+    }
+
 }

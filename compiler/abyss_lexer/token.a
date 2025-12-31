@@ -1,0 +1,33 @@
+pub struct KindEof
+pub struct KindNewline
+pub struct KindWhitespace
+pub struct KindIdent
+pub struct KindInt
+pub struct KindFloat
+pub struct KindString
+pub struct KindComment
+pub struct KindSymbol
+
+pub struct RawToken {
+    kind: KindEof | KindNewline | KindWhitespace | KindIdent | KindInt | KindFloat | KindString | KindComment | KindSymbol,
+    len: i64
+}
+
+
+fn make_raw_token<T>(k: T, l: i64): RawToken {
+    RawToken {
+        kind: k as KindEof | KindNewline | KindWhitespace | KindIdent | KindInt | KindFloat | KindString | KindComment | KindSymbol,
+        len: l
+    }
+}
+
+
+
+pub struct A
+pub struct B
+pub struct C
+pub struct Let
+
+pub fn token_from<T>(t: T): A | B | C | Let {
+    t as A | B | C | Let;
+}

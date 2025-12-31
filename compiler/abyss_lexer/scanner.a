@@ -1,0 +1,109 @@
+use std::string::Str;
+
+use pre::abyss_lexer::cursor::Cursor;
+use pre::abyss_lexer::token::KindInt;
+use pre::abyss_lexer::token::KindFloat;
+
+pub struct Scanner {
+    cursor: Cursor
+}
+
+impl Scanner {
+
+    fn new(input: Str): Scanner {
+        let c = Cursor.new(input);
+        Scanner {
+            cursor: c
+        }
+    }
+
+    fn is_simple_whitespace(c: u8): bool {
+        c == " "[0] or c == "\t"[0]
+    }
+
+    fn is_newline(c: u8): bool {
+        c == "\n"[0] or c == "\r"[0]
+    }
+
+    fn is_ident_start(c: u8): bool {
+        (c >= "a"[0] and c <= "z"[0]) or (c >= "A"[0] and c <= "Z"[0]) or c == "_"[0]
+    }
+
+    fn is_ident_continue(c: u8): bool {
+        (c >= "a"[0] and c <= "z"[0]) or (c >= "A"[0] and c <= "Z"[0]) or (c >= "0"[0] and c <= "9"[0]) or c == "_"[0]
+    }
+
+
+    fn is_digit(c: u8): bool {
+        c >= "0"[0] and c <= "9"[0]
+    }
+
+    fn is_string_start(c: u8): bool {
+        c == "'"[0]
+    }
+
+    fn consume_newlines(self: &Scanner) {
+        while self.is_newline(self.cursor.first()) {
+            self.cursor.bump()
+        }
+    }
+
+    fn consume_simple_whitespace(self: &Scanner) {
+        while self.is_simple_whitespace(self.cursor.first()) {
+            self.cursor.bump()
+        }
+    }
+
+    fn scan_identifier(self: &Scanner) {
+        while self.is_ident_continue(self.cursor.first()) {
+            self.cursor.bump()
+        }
+    }
+
+    fn scan_comment(self: &Scanner) {
+        self.cursor.bump()
+        self.cursor.bump()
+        
+        while 1 {
+            let c = self.cursor.first();
+            if self.is_newline(c) or c == 0 as u8 {
+                out
+            }
+            self.cursor.bump()
+        }
+    }
+
+    fn scan_number(self: &Scanner): KindInt | KindFloat {
+        while self.is_digit(self.cursor.first()) {
+            self.cursor.bump()
+        }
+        
+        if self.cursor.first() == "."[0] and self.is_digit(self.cursor.second()) {
+            self.cursor.bump(); 
+            while self.is_digit(self.cursor.first()) {
+                self.cursor.bump()
+            }
+           ret struct KindFloat as KindInt | KindFloat;
+        }
+
+        ret struct KindInt as KindInt | KindFloat;
+    }
+
+     fn scan_string(self: &Scanner) {
+        self.cursor.bump();
+        
+        forever {
+            let c = self.cursor.first();
+            if c == "'"[0] or c == 0 as u8 { 
+                out
+            }
+
+            self.cursor.bump();
+        }
+
+        if self.cursor.first() == "'"[0] {
+            self.cursor.bump();
+        }
+    }
+
+}

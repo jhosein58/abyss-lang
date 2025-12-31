@@ -1,0 +1,79 @@
+use std::string::Str;
+
+pub struct Cursor {
+    buf: Str,
+    current: i64,
+    initial_len: i64
+}
+
+impl Cursor {
+
+    fn new(input: Str): Cursor {
+        let len = input.len()
+        Cursor {
+            buf: input,
+            current: 0,
+            initial_len: len
+        }
+    }
+
+    fn clone(self: &Cursor): Cursor {
+        *self
+    }
+
+
+    fn bump(self: &Cursor): u8 {
+        if self.current >= self.initial_len {
+            ret 0 as u8 
+        }
+
+        let idx = self.current;
+        self.current = self.current + 1;
+        
+        ret self.buf.buf.ptr[idx]
+    }
+
+    fn first(self: &Cursor): u8 {
+        if self.current >= self.initial_len then ret 0 as u8 
+        ret self.buf.buf.ptr[self.current]
+    }
+
+    fn second(self: &Cursor): u8 {
+        if self.current + 1 >= self.initial_len then ret 0 as u8 
+        ret self.buf.buf.ptr[self.current + 1]
+    }
+
+    fn peek_offset(self: &Cursor, n: i64): u8 {
+        let target_idx = self.current + n;
+        if target_idx >= self.initial_len {
+            ret 0 as u8
+        }
+        ret self.buf.buf.ptr[target_idx]
+    }
+
+    fn is_eof(self: &Cursor): i64 {
+        self.current >= self.initial_len
+    }
+
+    fn len_consumed(self: &Cursor): i64 {
+        self.current
+    }
+
+    fn len_remaining(self: &Cursor): i64 {
+        self.initial_len - self.current
+    }
+
+
+    fn eat_if<T>(self: &Cursor, predicate: T): bool {
+        if not self.is_eof() and predicate.call(self.first()) {
+            self.bump();
+            ret true
+        } else ret false
+    }
+
+    fn eat_while<T>(self: &Cursor, predicate: T) {
+        while not self.is_eof() and predicate.call(self.first()) {
+            self.bump();
+        }
+    }
+}
