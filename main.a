@@ -2,21 +2,34 @@ mod stdlib::std;
 mod compiler::pre;
 
 use std::string::Str;
+use std::file::File;
 
 use pre::abyss_lexer::cursor::Cursor;
 use pre::abyss_lexer::scanner::Scanner;
 use pre::abyss_lexer::token::token_from;
-use pre::abyss_lexer::token::A;
-use pre::abyss_lexer::token::B;
-use pre::abyss_lexer::token::C;
+use pre::abyss_lexer::token::KindEof;
+
 
 fn app_main {
 
 
-    if Scanner.is_ident_start("3"[0]) {
-        printf("yes\n")
-    } else {  
-        printf("no\n")
+    let code = File.read_to_string("test.a")
+
+    let s = Scanner.new(code);
+
+    
+    forever {
+        let a = s.next_raw()
+        a.get_kind().println()
+
+
+        if a.kind is KindEof {
+            out
+        }
+        
     }
 
 }
+
+
+

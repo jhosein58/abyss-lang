@@ -1,8 +1,18 @@
 use std::string::Str;
 
 use pre::abyss_lexer::cursor::Cursor;
+use pre::abyss_lexer::token::RawToken;
+use pre::abyss_lexer::token::KindEof;
+use pre::abyss_lexer::token::KindNewline;
+use pre::abyss_lexer::token::KindWhitespace;
+use pre::abyss_lexer::token::KindIdent;
 use pre::abyss_lexer::token::KindInt;
 use pre::abyss_lexer::token::KindFloat;
+use pre::abyss_lexer::token::KindString;
+use pre::abyss_lexer::token::KindComment;
+use pre::abyss_lexer::token::KindSymbol;
+use pre::abyss_lexer::token::KindSymbol;
+use pre::abyss_lexer::token::make_raw_token;
 
 pub struct Scanner {
     cursor: Cursor
@@ -104,6 +114,64 @@ impl Scanner {
         if self.cursor.first() == "'"[0] {
             self.cursor.bump();
         }
+    }
+
+
+
+    pub fn next_raw(self: &Scanner): RawToken {
+        
+        if self.cursor.current >= self.cursor.initial_len {
+            ret make_raw_token(struct KindEof, 0)
+        }
+
+        let start_pos = self.cursor.current;
+        let first_char = self.cursor.first();
+
+       
+        if self.is_newline(first_char) {
+            self.consume_newlines();
+            let len = self.cursor.current - start_pos;
+            ret make_raw_token(struct KindNewline, len);
+        }
+        
+        if self.is_simple_whitespace(first_char) {
+            self.consume_simple_whitespace();
+            let len = self.cursor.current - start_pos;
+            ret make_raw_token(struct KindWhitespace, len);
+        }
+
+        if self.is_ident_start(first_char) {
+            self.scan_identifier();
+            let len = self.cursor.current - start_pos;
+            ret make_raw_token(struct KindIdent, len);
+        }
+
+        if self.is_digit(first_char) {
+            let num_kind = self.scan_number();
+            let len = self.cursor.current - start_pos;
+            
+            if num_kind is KindFloat {
+                 ret make_raw_token(struct KindFloat, len);
+            } else {
+                 ret make_raw_token(struct KindInt, len);
+            }
+        }
+
+        if self.is_string_start(first_char) {
+            self.scan_string();
+            let len = self.cursor.current - start_pos;
+            ret make_raw_token(struct KindString, len);
+        }
+
+        if first_char == "-"[0] and self.cursor.second() == "-"[0] {
+            self.scan_comment();
+            let len = self.cursor.current - start_pos;
+            ret make_raw_token(struct KindComment, len);
+        }
+
+        self.cursor.bump();
+        let len = self.cursor.current - start_pos;
+        ret make_raw_token(struct KindSymbol, len);
     }
 
 }

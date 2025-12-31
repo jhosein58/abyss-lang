@@ -1,3 +1,5 @@
+use std::string::Str;
+
 pub struct KindEof
 pub struct KindNewline
 pub struct KindWhitespace
@@ -13,8 +15,44 @@ pub struct RawToken {
     len: i64
 }
 
+impl RawToken {
+    
+    fn get_kind(self: &RawToken): Str {
 
-fn make_raw_token<T>(k: T, l: i64): RawToken {
+        if self.kind is KindEof {
+            ret Str.from("EOF")
+        }
+        if self.kind is KindNewline {
+            ret Str.from("NewLine")
+        }
+        if self.kind is KindWhitespace {
+            ret Str.from("WhiteSpace")
+        }
+        if self.kind is KindIdent {
+            ret Str.from("Ident")
+        }
+        if self.kind is KindInt {
+            ret Str.from("Int")
+        }
+        if self.kind is KindFloat {
+            ret Str.from("Float")
+        }
+        if self.kind is KindString {
+            ret Str.from("String")
+        }
+        if self.kind is KindComment {
+            ret Str.from("Comment")
+        }
+        if self.kind is KindSymbol {
+            ret Str.from("Symbol")
+        }
+
+        ret Str.new()
+
+    }
+}
+
+pub fn make_raw_token<T>(k: T, l: i64): RawToken {
     RawToken {
         kind: k as KindEof | KindNewline | KindWhitespace | KindIdent | KindInt | KindFloat | KindString | KindComment | KindSymbol,
         len: l
